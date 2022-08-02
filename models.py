@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Union
 
 from pydantic import BaseModel
 
@@ -16,3 +17,4 @@ class News(BaseModel):
     headline: str
     link: str
     source: str
+    image_url: Union[None, str] = None

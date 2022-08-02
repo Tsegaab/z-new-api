@@ -69,7 +69,7 @@ class RedditAPI(BaseAPI):
                     models.News(headline=a['title'],
                                 link=self.URL + a['url'],
                                 source=self.source_name,
-                                image_url=a['']))
+                                image_url=a['header_img']))
         return news_list
 
 
@@ -96,5 +96,6 @@ class NewsAPI(BaseAPI):
             news_list.append(
                 models.News(headline=a['title'],
                             link=a['url'],
-                            source=self.source_name))
+                            source=self.source_name,
+                            image_url=a['urlToImage']))
         return news_list
