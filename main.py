@@ -24,4 +24,4 @@ def news(q: Union[str, None] = 'e'):
 @api.get(
     '/r/news', )
 def reddit_news():
-    RedditAPI().get_news_list()
+    return RedditAPI().get_news_list()

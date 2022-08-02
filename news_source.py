@@ -1,6 +1,7 @@
 import json
 import time
 from typing import Union
+from abc import ABC, abstractmethod
 
 import requests
 
@@ -9,12 +10,17 @@ import models
 
 
 class BaseAPI:
-    pass
+ 
+    @abstractmethod
+    def get_news_list(self, q: Union[str, None] = 'e') -> list:
+        pass
+ 
 
 
 class RedditAPI(BaseAPI):
 
     URL = 'https://www.reddit.com'
+    source_name = 'reddit'
 
     def __init__(self) -> None:
         self.token = None
@@ -37,12 +43,11 @@ class RedditAPI(BaseAPI):
                 auth=requests.auth.HTTPBasicAuth(settings.REDDIT_APP_ID,
                                                  settings.REDDIT_APP_SECRET))
             response_json = response.json()
-            print(response_json)
             self.token = response_json['access_token']
             self.token_time = time.time()
         return self.token
 
-    def get_news_list(self, q: Union[str, None] = None) -> list:
+    def get_news_list(self, q: Union[str, None] = 'e ') -> list:
         url = 'https://oauth.reddit.com/subreddits/search?'
         if q:
             url += f'q={q}'
@@ -55,16 +60,16 @@ class RedditAPI(BaseAPI):
                 'User-Agent':
                 f'{settings.REDDIT_APP_NAME} by {settings.REDDIT_USERNAME}'
             })
-
-        print(response.text)
         response_json = response.json()
         news_list = []
-        for element in response_json['data']['children']:
-            a = element['data']
-            news_list.append(
-                models.News(headline=a['title'],
-                            link=a['url'],
-                            source=self.source_name))
+        if response_json:
+            for element in response_json['data']['children']:
+                a = element['data']
+                news_list.append(
+                    models.News(headline=a['title'],
+                                link=self.URL + a['url'],
+                                source=self.source_name,
+                                image_url=a['']))
         return news_list
 
 
